@@ -13,9 +13,13 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 moveDirection = Vector3.zero;
     private Vector3 lastPosition = Vector3.zero;
+    private float verticalVelocity = 0f;
 
     public bool isMoving = false;
-    public bool wallRunning = false; // Added flag for wallrunning
+    public bool wallRunning = false;
+    private bool isWallJumping = false;
+    private float wallJumpDuration = 0.2f;
+    private float wallJumpTimer = 0f;
 
     private float currentSpeed;
 
@@ -28,13 +32,56 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (wallRunning)
+        if (isWallJumping)
         {
-            WallRunMove();
+            wallJumpTimer -= Time.deltaTime;
+            if (wallJumpTimer <= 0f)
+                isWallJumping = false;
+        }
+
+        if (!wallRunning)
+        {
+            // Handle gravity
+            if (controller.isGrounded && !isWallJumping)
+            {
+                verticalVelocity = -2f; // small downward force to stick to ground
+                if (Input.GetButtonDown("Jump"))
+                {
+                    verticalVelocity = jumpPower;
+                }
+            }
+            else if (!isWallJumping)
+            {
+                verticalVelocity -= gravity * Time.deltaTime;
+            }
+
+            // moveDirection.x and moveDirection.z = horizontal input * speed
+            // vertical is verticalVelocity
+
+            float x = Input.GetAxis("Horizontal");
+            float z = Input.GetAxis("Vertical");
+
+            Vector3 forward = transform.forward;
+            Vector3 right = transform.right;
+
+            Vector3 horizontalMove = forward * z + right * x;
+            horizontalMove *= currentSpeed;
+
+            moveDirection = horizontalMove;
+            moveDirection.y = verticalVelocity;
+
+            controller.Move(moveDirection * Time.deltaTime);
         }
         else
         {
-            WalkMove();
+            if (wallRunning)
+            {
+                WallRunMove();
+            }
+            else
+            {
+                WalkMove();
+            }
         }
 
         // Track movement state
@@ -54,7 +101,7 @@ public class PlayerMovement : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-         // Calculate horizontal movement relative to player orientation
+        // Calculate horizontal movement relative to player orientation
         Vector3 forward = transform.forward;
         Vector3 right = transform.right;
 
@@ -76,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            // If in the air, apply gravity
+            // Apply gravity if midair
             verticalVelocity -= gravity * Time.deltaTime;
         }
 
@@ -109,5 +156,18 @@ public class PlayerMovement : MonoBehaviour
         moveDirection.y = verticalVelocity;
 
         controller.Move(moveDirection * Time.deltaTime);
+    }
+    
+    // Method called from WallRunning.cs to apply a wall jump impulse
+    public void ApplyWallJump(Vector3 jumpImpulse)
+    {
+        isWallJumping = true;
+        wallJumpTimer = wallJumpDuration;
+
+        verticalVelocity = jumpImpulse.y;
+
+        // Apply sideways velocity immediately - using moveDirection.x and z
+        moveDirection.x = jumpImpulse.x;
+        moveDirection.z = jumpImpulse.z;
     }
 }
