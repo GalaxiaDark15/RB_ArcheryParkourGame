@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     private CharacterController controller;
 
-    public float speed = 6f;
+    public float speed = 5f;
     public float gravity = 9.81f * 2;   // Positive value, gravity magnitude
     public float jumpPower = 7f;         // Similar to jumpPower in XPlayerMovement
 
@@ -64,5 +64,26 @@ public class PlayerMovement : MonoBehaviour
         // Track movement state
         isMoving = (transform.position != lastPosition) && controller.isGrounded;
         lastPosition = transform.position;
+
+
+        // Running
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+        {
+            PlayerRun();
+        }
+        else
+        {
+            PlayerStopRunning();
+        }
+    }
+
+    void PlayerRun()
+    {
+        speed = 9f;
+    }
+
+    void PlayerStopRunning()
+    {
+        speed = 5f;
     }
 }
