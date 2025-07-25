@@ -6,33 +6,60 @@ public class PlayerMovement : MonoBehaviour
 {
     private CharacterController controller;
 
-    public float speed = 5f;
-    public float gravity = 9.81f * 2;   // Positive value, gravity magnitude
-    public float jumpPower = 7f;         // Similar to jumpPower in XPlayerMovement
+    public float walkSpeed = 5f;
+    public float runSpeed = 9f;
+    public float gravity = 9.81f * 2;
+    public float jumpPower = 7f;
 
     private Vector3 moveDirection = Vector3.zero;
-
     private Vector3 lastPosition = Vector3.zero;
 
     public bool isMoving = false;
+    public bool wallRunning = false; // Added flag for wallrunning
+
+    private float currentSpeed;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         lastPosition = transform.position;
+        currentSpeed = walkSpeed; // default speed
     }
 
     void Update()
     {
-        // Get inputs on the horizontal plane
-        float x = Input.GetAxis("Horizontal"); // Left/Right
-        float z = Input.GetAxis("Vertical");   // Forward/Backward
+        if (wallRunning)
+        {
+            WallRunMove();
+        }
+        else
+        {
+            WalkMove();
+        }
 
-        // Calculate horizontal movement relative to player orientation
+        // Track movement state
+        isMoving = (transform.position != lastPosition) && controller.isGrounded;
+        lastPosition = transform.position;
+    }
+
+    void WalkMove()
+    {
+        // Run logic: update speed based on Shift
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+            currentSpeed = runSpeed;
+        else
+            currentSpeed = walkSpeed;
+
+        // Get inputs
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+
+         // Calculate horizontal movement relative to player orientation
         Vector3 forward = transform.forward;
         Vector3 right = transform.right;
+
         Vector3 horizontalMove = forward * z + right * x;
-        horizontalMove *= speed;
+        horizontalMove *= currentSpeed;
 
         // Keep the current vertical velocity so gravity and jumping accumulate
         float verticalVelocity = moveDirection.y;
@@ -45,9 +72,7 @@ public class PlayerMovement : MonoBehaviour
                 verticalVelocity = -2f;
 
             if (Input.GetButtonDown("Jump"))
-            {
                 verticalVelocity = jumpPower;
-            }
         }
         else
         {
@@ -61,30 +86,28 @@ public class PlayerMovement : MonoBehaviour
 
         // Move the character controller
         controller.Move(moveDirection * Time.deltaTime);
-
-        // Track movement state
-        isMoving = (transform.position != lastPosition) && controller.isGrounded;
-        lastPosition = transform.position;
-
-
-        // Running
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-        {
-            PlayerRun();
-        }
-        else
-        {
-            PlayerStopRunning();
-        }
     }
 
-    void PlayerRun()
+    void WallRunMove()
     {
-        speed = 9f;
-    }
+        // Apply gravity manually or limit vertical fall while wall running
+        float verticalVelocity = moveDirection.y;
+        verticalVelocity = 0f; // Lock vertical while wall running or adjust as desired
 
-    void PlayerStopRunning()
-    {
-        speed = 5f;
+        // Horizontal movement along forward
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+
+        Vector3 forward = transform.forward;
+        Vector3 right = transform.right;
+
+        // Move forward along wall with increased speed (can use runSpeed)
+        Vector3 wallRunMove = forward * z + right * x;
+        wallRunMove = wallRunMove.normalized * runSpeed;
+
+        moveDirection = wallRunMove;
+        moveDirection.y = verticalVelocity;
+
+        controller.Move(moveDirection * Time.deltaTime);
     }
 }
