@@ -13,7 +13,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 moveDirection = Vector3.zero;
 
     private Vector3 lastPosition = Vector3.zero;
-    private bool isMoving = false;
+
+    public bool isMoving = false;
 
     void Start()
     {
