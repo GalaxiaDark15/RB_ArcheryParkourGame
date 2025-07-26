@@ -36,6 +36,9 @@ public class WallRunning : MonoBehaviour
     private PlayerMovement pm;
     private CharacterController controller;
 
+    // Local state tracker for wallrunning
+    private bool isWallRunning = false;
+
     void Start()
     {
         pm = GetComponent<PlayerMovement>();
@@ -73,67 +76,84 @@ public class WallRunning : MonoBehaviour
 
     private void StateMachine()
     {
-        // Activate wall running only when pressing shift and conditions met
+         // Activate wall running only when pressing shift and conditions met
         bool shiftPressed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        bool canWallRun = (wallLeft || wallRight) && verticalInput > 0 && AboveGround() && shiftPressed && !exitingWall;
 
-        // State 1 - Wallrunning
-        if ((wallLeft || wallRight) && verticalInput > 0 && AboveGround() && shiftPressed && !exitingWall)
+        if (canWallRun)
         {
-            // Only start wall run if timer not expired
-            if (!pm.wallRunning && wallRunTimer > 0)
-                StartWallRun();
-
-            // Decrease wall run timer only while wall running and timer > 0
-            if (pm.wallRunning && wallRunTimer > 0)
-                wallRunTimer -= Time.deltaTime;
-
-            // Once timer hits 0 while running, start exiting
-            if (wallRunTimer <= 0 && pm.wallRunning)
+            if (!isWallRunning)
             {
+                StartWallRun();
+                isWallRunning = true;
+                pm.wallRunning = true; // Update external reference
+            }
+
+            if (wallRunTimer > 0)
+            {
+                wallRunTimer -= Time.deltaTime;
+            }
+            else
+            {
+                // Wall run time expired, enter exit state
                 exitingWall = true;
                 exitWallTimer = exitWallTime;
                 Debug.Log("WallRun timer ended - entering exit state.");
             }
 
-            // Wall jump
+            // Wall jump input
             if (Input.GetKeyDown(jumpKey))
+            {
                 WallJump();
+            }
         }
-        // State 2 - Exiting
         else if (exitingWall)
         {
-            if (pm.wallRunning)
+            if (isWallRunning)
+            {
                 StopWallRun();
+                isWallRunning = false;
+                pm.wallRunning = false;
+            }
 
             if (exitWallTimer > 0)
+            {
                 exitWallTimer -= Time.deltaTime;
+            }
 
             if (exitWallTimer <= 0)
             {
                 exitingWall = false;
-                wallRunTimer = maxWallRunTime;  // Reset timer only after exit finishes
+                wallRunTimer = maxWallRunTime;
                 Debug.Log("ExitWall timer ended - can wall run again.");
             }
         }
-        // State 3 - None
         else
         {
-            if (pm.wallRunning)
+            // Not wallrunning or exiting, ensure wallrunning is stopped and timer resets
+            if (isWallRunning)
+            {
                 StopWallRun();
+                isWallRunning = false;
+                pm.wallRunning = false;
+            }
+
+            // Reset timer so wallrun duration is restored for next run
+            wallRunTimer = maxWallRunTime;
         }
     }
 
-
     private void StartWallRun()
     {
-        pm.wallRunning = true;
-        wallRunTimer = maxWallRunTime;  // Reset timer only upon starting
+        wallRunTimer = maxWallRunTime; 
+        pm.wallRunning = true; 
+        Debug.Log("Start Wallrun");
     }
 
     private void StopWallRun()
     {
         pm.wallRunning = false;
-        wallRunTimer = maxWallRunTime;  // Reset timer ready for next run
+        Debug.Log("Stop Wallrun");
     }
 
     private void WallJump()
@@ -146,9 +166,10 @@ public class WallRunning : MonoBehaviour
         Vector3 jumpSideways = wallNormal * wallJumpSideForce;
 
         Vector3 jumpDirection = jumpUpward + jumpSideways;
-
         pm.ApplyWallJump(jumpDirection);
 
-        StopWallRun();  // Stop wall running on jump
+        StopWallRun();
+        isWallRunning = false;
+        pm.wallRunning = false;
     }
 }
