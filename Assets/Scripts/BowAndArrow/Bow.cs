@@ -24,6 +24,12 @@ public class Bow : MonoBehaviour
         this.enemyTag = enemyTag;
     }
 
+    public float ReloadTime
+    {
+        get { return reloadTime; }
+        set { reloadTime = value; }
+    }
+
     public void Reload()
     {
         if (isReloading || currentArrow != null) return;
@@ -33,12 +39,15 @@ public class Bow : MonoBehaviour
 
     private IEnumerator ReloadAfterTime()
     {
-        yield return new WaitForSeconds(reloadTime);
+        // Use WaitForSecondsRealtime to ignore timeScale slowing
+        yield return new WaitForSecondsRealtime(reloadTime);
+
         currentArrow = Instantiate(arrowPrefab, spawnPoint);
         currentArrow.transform.localPosition = Vector3.zero;
         currentArrow.SetEnemyTag(enemyTag);
         isReloading = false;
     }
+
 
     public void Fire(float firePower)
     {

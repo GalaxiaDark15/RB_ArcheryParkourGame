@@ -21,7 +21,15 @@ public class PlayerMovement : MonoBehaviour
     private float wallJumpDuration = 0.2f;
     private float wallJumpTimer = 0f;
 
+    private float bulletTimeTimer = 0f;
+    private bool bulletTimeActive = false;
+
+
     private float currentSpeed;
+
+    [Header("References")]
+    public TimeManager timeManager;
+
 
     void Start()
     {
@@ -87,6 +95,40 @@ public class PlayerMovement : MonoBehaviour
         // Track movement state
         isMoving = (transform.position != lastPosition) && controller.isGrounded;
         lastPosition = transform.position;
+
+        // Bullet time Function
+        if (bulletTimeActive)
+        {
+            // Decrease bullet time timer in unscaled real time
+            bulletTimeTimer -= Time.unscaledDeltaTime;
+
+            // Stop bullet time if timer finished or E key pressed
+            if (bulletTimeTimer <= 0f || Input.GetKeyDown(KeyCode.E))
+            {
+                bulletTimeActive = false;
+                timeManager.DoNormalTime();
+                Debug.Log("Bullet Time Ended");
+            }
+            else if (controller.isGrounded)
+            {
+                // Optional: Stop bullet time on landing as well
+                bulletTimeActive = false;
+                timeManager.DoNormalTime();
+                Debug.Log("Bullet Time Ended - Player Landed");
+            }
+        }
+        else
+        {
+            // Bullet time inactive:
+            // Start bullet time if player is midair and presses left mouse button down
+            if (!controller.isGrounded && Input.GetMouseButtonDown(0))
+            {
+                bulletTimeActive = true;
+                bulletTimeTimer = timeManager.bulletTimeDuration;
+                timeManager.DoBulletTime();
+                Debug.Log("Bullet Time Started");
+            }
+        }
     }
 
     void WalkMove()
@@ -157,7 +199,7 @@ public class PlayerMovement : MonoBehaviour
 
         controller.Move(moveDirection * Time.deltaTime);
     }
-    
+
     // Method called from WallRunning.cs to apply a wall jump impulse
     public void ApplyWallJump(Vector3 jumpImpulse)
     {

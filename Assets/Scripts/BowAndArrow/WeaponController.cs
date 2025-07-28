@@ -12,6 +12,9 @@ public class WeaponController : MonoBehaviour
     private Bow bow;
 
     [SerializeField]
+    private float reloadTime = 1f;
+
+    [SerializeField]
     private string enemyTag;
 
     [SerializeField]
@@ -19,6 +22,11 @@ public class WeaponController : MonoBehaviour
 
     [SerializeField]
     private float firePowerSpeed;
+
+    // Store original values of Max Fire Power and Fire Power Speed
+    private float originalMaxFirePower;
+
+    private float originalFirePowerSpeed;
 
     private float firePower;
 
@@ -37,7 +45,12 @@ public class WeaponController : MonoBehaviour
 
     void Start()
     {
+        // Store the original values when the game starts
+        originalMaxFirePower = maxFirePower;
+        originalFirePowerSpeed = firePowerSpeed;
+
         bow.SetEnemyTag(enemyTag);
+        bow.ReloadTime = reloadTime;  // Set reload time on Bow
         bow.Reload();
 
         Cursor.visible = false;
@@ -70,5 +83,17 @@ public class WeaponController : MonoBehaviour
         {
             // firePowerText.text = firePower.ToString();
         }
+    }
+
+    public void SetBulletTimeFireValues()
+    {
+        maxFirePower = 1000f;
+        firePowerSpeed = 2000f;
+    }
+
+    public void ResetFireValues()
+    {
+        maxFirePower = originalMaxFirePower;
+        firePowerSpeed = originalFirePowerSpeed;
     }
 }
