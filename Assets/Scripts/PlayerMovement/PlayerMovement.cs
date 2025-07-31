@@ -103,17 +103,14 @@ public class PlayerMovement : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E))
             {
                 timeManager.DoNormalTime();
-                Debug.Log("Bullet Time Ended (E pressed)");
             }
             else if (controller.isGrounded)
             {
                 timeManager.DoNormalTime();
-                Debug.Log("Bullet Time Ended - Player Landed");
             }
             else if (!controller.isGrounded && Input.GetMouseButtonDown(0))
             {
                 timeManager.DoBulletTime();
-                Debug.Log("Bullet Time Started");
             }
         }
     }

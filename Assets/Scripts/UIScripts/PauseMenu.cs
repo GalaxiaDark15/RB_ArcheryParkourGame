@@ -36,25 +36,39 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
+        Debug.Log("[PauseMenu] Pause called.");
         pauseMenu.SetActive(true);
-        Time.timeScale = 0f;
+
+        timeManager.isPaused = true;
+        timeManager.SaveTimeScaleBeforePause();
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         _isPaused = true;
         playerMovement.isPaused = true;
         mouseMovement.isPaused = true;
         weaponController.isPaused = true;
+
+        Debug.Log($"[PauseMenu] Paused: isPaused = {timeManager.isPaused}, Time.timeScale = {Time.timeScale}");
     }
 
     public void Resume()
     {
+        Debug.Log("[PauseMenu] Resume called.");
         pauseMenu.SetActive(false);
-        Time.timeScale = 1f;
+
+        timeManager.isPaused = false;
+        timeManager.RestoreTimeScaleAfterResume();
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         _isPaused = false;
         playerMovement.isPaused = false;
         mouseMovement.isPaused = false;
         weaponController.isPaused = false;
+
+        Debug.Log($"[PauseMenu] Resumed: isPaused = {timeManager.isPaused}, Time.timeScale = {Time.timeScale}");
     }
+
+
 }
