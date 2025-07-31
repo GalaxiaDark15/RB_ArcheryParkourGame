@@ -36,7 +36,6 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
-        Debug.Log("[PauseMenu] Pause called.");
         pauseMenu.SetActive(true);
 
         timeManager.isPaused = true;
@@ -48,13 +47,10 @@ public class PauseMenu : MonoBehaviour
         playerMovement.isPaused = true;
         mouseMovement.isPaused = true;
         weaponController.isPaused = true;
-
-        Debug.Log($"[PauseMenu] Paused: isPaused = {timeManager.isPaused}, Time.timeScale = {Time.timeScale}");
     }
 
     public void Resume()
     {
-        Debug.Log("[PauseMenu] Resume called.");
         pauseMenu.SetActive(false);
 
         timeManager.isPaused = false;
@@ -66,8 +62,6 @@ public class PauseMenu : MonoBehaviour
         playerMovement.isPaused = false;
         mouseMovement.isPaused = false;
         weaponController.isPaused = false;
-
-        Debug.Log($"[PauseMenu] Resumed: isPaused = {timeManager.isPaused}, Time.timeScale = {Time.timeScale}");
     }
 
 
