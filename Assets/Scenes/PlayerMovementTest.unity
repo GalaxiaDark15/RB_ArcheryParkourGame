@@ -1124,6 +1124,7 @@ MonoBehaviour:
   isMoving: 0
   wallRunning: 0
   timeManager: {fileID: 1160110990}
+  isPaused: 0
 --- !u!114 &1053286574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1200,6 +1201,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 1434020253}
   timeManager: {fileID: 1160110990}
+  playerMovement: {fileID: 1053286573}
   mouseMovement: {fileID: 1053286572}
   weaponController: {fileID: 1053286576}
 --- !u!1 &1108874258
@@ -1383,6 +1385,7 @@ MonoBehaviour:
   slowDownFactor: 0.1
   bulletTimeDuration: 10
   weaponController: {fileID: 1053286576}
+  isPaused: 0
 --- !u!1 &1385323163
 GameObject:
   m_ObjectHideFlags: 0
@@ -1635,6 +1638,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 1434020253}
   timeManager: {fileID: 1160110990}
+  playerMovement: {fileID: 1053286573}
   mouseMovement: {fileID: 1053286572}
   weaponController: {fileID: 1053286576}
 --- !u!1001 &1520219960
