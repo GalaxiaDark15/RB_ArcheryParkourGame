@@ -10,6 +10,15 @@ public class PauseMenu : MonoBehaviour
     [SerializeField]
     private TimeManager timeManager;
 
+    [SerializeField]
+    private PlayerMovement playerMovement;
+
+    [SerializeField]
+    private MouseMovement mouseMovement;
+
+    [SerializeField]
+    private WeaponController weaponController;
+
     private static bool _isPaused = false;
     public static bool IsPaused => _isPaused;
 
@@ -32,6 +41,9 @@ public class PauseMenu : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         _isPaused = true;
+        playerMovement.isPaused = true;
+        mouseMovement.isPaused = true;
+        weaponController.isPaused = true;
     }
 
     public void Resume()
@@ -41,5 +53,8 @@ public class PauseMenu : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         _isPaused = false;
+        playerMovement.isPaused = false;
+        mouseMovement.isPaused = false;
+        weaponController.isPaused = false;
     }
 }

@@ -1102,9 +1102,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mouseSensitivity: 1500
-  isPaused: 1
   topClamp: -90
   bottomClamp: 90
+  isPaused: 0
 --- !u!114 &1053286573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1185,7 +1185,7 @@ MonoBehaviour:
   rotateSpeed: 5
   minRotation: -50
   maxRotation: 50
-  isPaused: 1
+  isPaused: 0
 --- !u!114 &1053286577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1200,6 +1200,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 1434020253}
   timeManager: {fileID: 1160110990}
+  mouseMovement: {fileID: 1053286572}
+  weaponController: {fileID: 1053286576}
 --- !u!1 &1108874258
 GameObject:
   m_ObjectHideFlags: 0
@@ -1632,7 +1634,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 1434020253}
-  timeManager: {fileID: 0}
+  timeManager: {fileID: 1160110990}
+  mouseMovement: {fileID: 1053286572}
+  weaponController: {fileID: 1053286576}
 --- !u!1001 &1520219960
 PrefabInstance:
   m_ObjectHideFlags: 0

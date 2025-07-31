@@ -31,6 +31,10 @@ public class PlayerMovement : MonoBehaviour
     public TimeManager timeManager;
 
 
+    // Is the game paused?
+    public bool isPaused = false;
+
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -40,93 +44,96 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (isWallJumping)
+        if (isPaused != true)
         {
-            wallJumpTimer -= Time.deltaTime;
-            if (wallJumpTimer <= 0f)
-                isWallJumping = false;
-        }
-
-        if (!wallRunning)
-        {
-            // Handle gravity
-            if (controller.isGrounded && !isWallJumping)
+            if (isWallJumping)
             {
-                verticalVelocity = -2f; // small downward force to stick to ground
-                if (Input.GetButtonDown("Jump"))
+                wallJumpTimer -= Time.deltaTime;
+                if (wallJumpTimer <= 0f)
+                    isWallJumping = false;
+            }
+
+            if (!wallRunning)
+            {
+                // Handle gravity
+                if (controller.isGrounded && !isWallJumping)
                 {
-                    verticalVelocity = jumpPower;
+                    verticalVelocity = -2f; // small downward force to stick to ground
+                    if (Input.GetButtonDown("Jump"))
+                    {
+                        verticalVelocity = jumpPower;
+                    }
                 }
-            }
-            else if (!isWallJumping)
-            {
-                verticalVelocity -= gravity * Time.deltaTime;
-            }
+                else if (!isWallJumping)
+                {
+                    verticalVelocity -= gravity * Time.deltaTime;
+                }
 
-            // moveDirection.x and moveDirection.z = horizontal input * speed
-            // vertical is verticalVelocity
+                // moveDirection.x and moveDirection.z = horizontal input * speed
+                // vertical is verticalVelocity
 
-            float x = Input.GetAxis("Horizontal");
-            float z = Input.GetAxis("Vertical");
+                float x = Input.GetAxis("Horizontal");
+                float z = Input.GetAxis("Vertical");
 
-            Vector3 forward = transform.forward;
-            Vector3 right = transform.right;
+                Vector3 forward = transform.forward;
+                Vector3 right = transform.right;
 
-            Vector3 horizontalMove = forward * z + right * x;
-            horizontalMove *= currentSpeed;
+                Vector3 horizontalMove = forward * z + right * x;
+                horizontalMove *= currentSpeed;
 
-            moveDirection = horizontalMove;
-            moveDirection.y = verticalVelocity;
+                moveDirection = horizontalMove;
+                moveDirection.y = verticalVelocity;
 
-            controller.Move(moveDirection * Time.deltaTime);
-        }
-        else
-        {
-            if (wallRunning)
-            {
-                WallRunMove();
+                controller.Move(moveDirection * Time.deltaTime);
             }
             else
             {
-                WalkMove();
+                if (wallRunning)
+                {
+                    WallRunMove();
+                }
+                else
+                {
+                    WalkMove();
+                }
             }
-        }
 
-        // Track movement state
-        isMoving = (transform.position != lastPosition) && controller.isGrounded;
-        lastPosition = transform.position;
+            // Track movement state
+            isMoving = (transform.position != lastPosition) && controller.isGrounded;
+            lastPosition = transform.position;
 
-        // Bullet time Function
-        if (bulletTimeActive)
-        {
-            // Decrease bullet time timer in unscaled real time
-            bulletTimeTimer -= Time.unscaledDeltaTime;
-
-            // Stop bullet time if timer finished or E key pressed
-            if (bulletTimeTimer <= 0f || Input.GetKeyDown(KeyCode.E))
+            // Bullet time Function
+            if (bulletTimeActive)
             {
-                bulletTimeActive = false;
-                timeManager.DoNormalTime();
-                Debug.Log("Bullet Time Ended");
+                // Decrease bullet time timer in unscaled real time
+                bulletTimeTimer -= Time.unscaledDeltaTime;
+
+                // Stop bullet time if timer finished or E key pressed
+                if (bulletTimeTimer <= 0f || Input.GetKeyDown(KeyCode.E))
+                {
+                    bulletTimeActive = false;
+                    timeManager.DoNormalTime();
+                    Debug.Log("Bullet Time Ended");
+                }
+                else if (controller.isGrounded)
+                {
+                    // Optional: Stop bullet time on landing as well
+                    bulletTimeActive = false;
+                    timeManager.DoNormalTime();
+                    Debug.Log("Bullet Time Ended - Player Landed");
+                }
             }
-            else if (controller.isGrounded)
+            else
             {
-                // Optional: Stop bullet time on landing as well
-                bulletTimeActive = false;
-                timeManager.DoNormalTime();
-                Debug.Log("Bullet Time Ended - Player Landed");
-            }
-        }
-        else
-        {
-            // Bullet time inactive:
-            // Start bullet time if player is midair and presses left mouse button down
-            if (!controller.isGrounded && Input.GetMouseButtonDown(0))
-            {
-                bulletTimeActive = true;
-                bulletTimeTimer = timeManager.bulletTimeDuration;
-                timeManager.DoBulletTime();
-                Debug.Log("Bullet Time Started");
+                // Bullet time inactive:
+                // Start bullet time if player is midair and presses left mouse button down
+                if (!controller.isGrounded && Input.GetMouseButtonDown(0))
+                {
+                    bulletTimeActive = true;
+                    bulletTimeTimer = timeManager.bulletTimeDuration;
+                    timeManager.DoBulletTime();
+                    Debug.Log("Bullet Time Started");
+                }
             }
         }
     }

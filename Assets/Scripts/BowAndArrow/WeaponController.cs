@@ -43,6 +43,9 @@ public class WeaponController : MonoBehaviour
 
     private bool fire;
 
+    // Is the game paused?
+    public bool isPaused = false;
+
     void Start()
     {
         // Store the original values when the game starts
@@ -59,29 +62,28 @@ public class WeaponController : MonoBehaviour
 
     void Update()
     {
-        mouseY -= Input.GetAxis("Mouse Y") * rotateSpeed;
-        mouseY = Mathf.Clamp(mouseY, minRotation, maxRotation);
 
-        if (Input.GetMouseButtonDown(0))
+        if (isPaused != true)
         {
-            fire = true;
-        }
+            mouseY -= Input.GetAxis("Mouse Y") * rotateSpeed;
+            mouseY = Mathf.Clamp(mouseY, minRotation, maxRotation);
 
-        if (fire && firePower < maxFirePower)
-        {
-            firePower += Time.deltaTime * firePowerSpeed;
-        }
+            if (Input.GetMouseButtonDown(0))
+            {
+                fire = true;
+            }
 
-        if (fire && Input.GetMouseButtonUp(0))
-        {
-            bow.Fire(firePower);
-            firePower = 0;
-            fire = false;
-        }
+            if (fire && firePower < maxFirePower)
+            {
+                firePower += Time.deltaTime * firePowerSpeed;
+            }
 
-        if (fire)
-        {
-            // firePowerText.text = firePower.ToString();
+            if (fire && Input.GetMouseButtonUp(0))
+            {
+                bow.Fire(firePower);
+                firePower = 0;
+                fire = false;
+            }
         }
     }
 
