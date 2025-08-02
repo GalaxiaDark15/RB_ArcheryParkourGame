@@ -13,7 +13,7 @@ public class Arrow : MonoBehaviour
     [SerializeField]
     private Rigidbody rigidBody;
 
-    private string enemyTag;
+    private string enemyTag = "Enemy";  // Default to "Enemy"
 
     private bool didHit;
 
@@ -24,6 +24,7 @@ public class Arrow : MonoBehaviour
 
     public void Fly(Vector3 force)
     {
+        gameObject.layer = LayerMask.NameToLayer("Arrows");
         rigidBody.isKinematic = false;
         rigidBody.AddForce(force, ForceMode.Impulse);
         rigidBody.AddTorque(transform.right * torque);
@@ -37,8 +38,11 @@ public class Arrow : MonoBehaviour
 
         if (collider.CompareTag(enemyTag))
         {
-            // var health = collider.GetComponent<HealthController>();
-            // health.ApplyDamage(damage);
+            EnemyHealth enemyHealth = collider.GetComponent<EnemyHealth>();
+            if (enemyHealth != null)
+            {
+                enemyHealth.TakeDamage();  // Call TakeDamage on the enemy
+            }
             Debug.Log("Arrow landed on enemy");
         }
 

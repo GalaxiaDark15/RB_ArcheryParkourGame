@@ -239,6 +239,7 @@ GameObject:
   - component: {fileID: 99536204}
   - component: {fileID: 99536203}
   - component: {fileID: 99536202}
+  - component: {fileID: 99536206}
   m_Layer: 0
   m_Name: EnemyLayerCube
   m_TagString: Enemy
@@ -332,6 +333,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &99536206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 99536201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4843d45aef0f5439ea96726d47fc6848, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyHealth: 100
 --- !u!1 &230949268
 GameObject:
   m_ObjectHideFlags: 0
@@ -1036,6 +1050,7 @@ GameObject:
   - component: {fileID: 1053286575}
   - component: {fileID: 1053286576}
   - component: {fileID: 1053286577}
+  - component: {fileID: 1053286578}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1204,6 +1219,19 @@ MonoBehaviour:
   playerMovement: {fileID: 1053286573}
   mouseMovement: {fileID: 1053286572}
   weaponController: {fileID: 1053286576}
+--- !u!114 &1053286578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1053286568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20791b1b5762142398886c9fd76f730b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerHealth: 100
 --- !u!1 &1108874258
 GameObject:
   m_ObjectHideFlags: 0
