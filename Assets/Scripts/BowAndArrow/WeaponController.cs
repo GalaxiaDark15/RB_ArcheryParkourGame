@@ -9,6 +9,9 @@ public class WeaponController : MonoBehaviour
     // private Text firePowerText;
 
     [SerializeField]
+    private SFXManager soundFXManager;
+
+    [SerializeField]
     private Bow bow;
 
     [SerializeField]
@@ -71,6 +74,7 @@ public class WeaponController : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 fire = true;
+                soundFXManager.playDrawBowSound();
             }
 
             if (fire && firePower < maxFirePower)
@@ -80,6 +84,8 @@ public class WeaponController : MonoBehaviour
 
             if (fire && Input.GetMouseButtonUp(0))
             {
+                soundFXManager.stopDrawBowSound();
+                soundFXManager.playArrowSound();
                 bow.Fire(firePower);
                 firePower = 0;
                 fire = false;
