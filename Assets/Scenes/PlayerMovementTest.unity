@@ -708,6 +708,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arrowSound: {fileID: 8300000, guid: 6c0f142a918ef4abc90ac5e3964b0dc7, type: 3}
+  drawBowSound: {fileID: 8300000, guid: 3a44e4f5f68034d9e9aeb91db058170c, type: 3}
 --- !u!1 &666980636
 GameObject:
   m_ObjectHideFlags: 0
@@ -761,7 +762,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 308926f90b1c1445298fb21ef8027cfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  soundFXManager: {fileID: 663241576}
   reloadTime: 1
   arrowPrefab: {fileID: 3247265980398249238, guid: 5187dfa4d8f19524e8bbf7c6894b7de7, type: 3}
   spawnPoint: {fileID: 666980637}
@@ -1239,6 +1239,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8b6c0745db8c46af8fcf08db9cf2cd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundFXManager: {fileID: 663241576}
   bow: {fileID: 704463962}
   reloadTime: 0.4
   enemyTag: Enemy
