@@ -709,6 +709,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   arrowSound: {fileID: 8300000, guid: 6c0f142a918ef4abc90ac5e3964b0dc7, type: 3}
   drawBowSound: {fileID: 8300000, guid: 3a44e4f5f68034d9e9aeb91db058170c, type: 3}
+  footstepsSound: {fileID: 8300000, guid: 45a6834f5539b4106a1b811199c8b67a, type: 3}
 --- !u!1 &666980636
 GameObject:
   m_ObjectHideFlags: 0

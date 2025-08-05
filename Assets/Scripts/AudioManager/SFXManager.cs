@@ -6,6 +6,7 @@ public class SFXManager : MonoBehaviour
 {
     public AudioClip arrowSound;
     public AudioClip drawBowSound;
+    public AudioClip footstepsSound;
     private AudioSource audioSource;
 
     void Awake()
@@ -32,7 +33,7 @@ public class SFXManager : MonoBehaviour
         {
             if (audioSource.clip != drawBowSound || !audioSource.isPlaying)
             {
-                audioSource.loop = true;
+                audioSource.loop = false;
                 audioSource.clip = drawBowSound;
                 audioSource.Play();
             }
@@ -48,4 +49,54 @@ public class SFXManager : MonoBehaviour
             audioSource.clip = null;
         }
     }
+
+
+    public void playFastFootstepsSound()
+    {
+        if (footstepsSound != null && audioSource != null)
+        {
+            if (audioSource.clip != footstepsSound || !audioSource.isPlaying)
+            {
+                audioSource.pitch = 1.5f;
+                audioSource.loop = true;
+                audioSource.clip = footstepsSound;
+                audioSource.Play();
+            }
+            else
+            {
+                // If already playing footsteps, just update pitch
+                audioSource.pitch = 1.5f;
+            }
+        }
+    }
+
+    public void playFootstepsSound()
+    {
+        if (footstepsSound != null && audioSource != null)
+        {
+            if (audioSource.clip != footstepsSound || !audioSource.isPlaying)
+            {
+                audioSource.pitch = 1.0f;
+                audioSource.loop = true;
+                audioSource.clip = footstepsSound;
+                audioSource.Play();
+            }
+            else
+            {
+                audioSource.pitch = 1.0f;
+            }
+        }
+    }
+
+    public void stopFootstepsSound()
+    {
+        if (audioSource != null && audioSource.clip == footstepsSound && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+            audioSource.loop = false;
+            audioSource.pitch = 1.0f;
+            audioSource.clip = null;
+        }
+    }
+
 }
