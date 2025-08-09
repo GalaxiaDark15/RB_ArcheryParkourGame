@@ -1263,6 +1263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9299f1dec46724ccbae0207acde280af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundFXManager: {fileID: 663241576}
   pauseMenu: {fileID: 1434020253}
   timeManager: {fileID: 1160110990}
   playerMovement: {fileID: 1053286573}
@@ -1713,6 +1714,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9299f1dec46724ccbae0207acde280af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundFXManager: {fileID: 0}
   pauseMenu: {fileID: 1434020253}
   timeManager: {fileID: 1160110990}
   playerMovement: {fileID: 1053286573}
