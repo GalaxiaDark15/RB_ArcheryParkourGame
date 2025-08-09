@@ -1179,6 +1179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0824e6d32e914194baa63eee55709d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundFXManager: {fileID: 663241576}
   walkSpeed: 5
   runSpeed: 9
   gravity: 19.62

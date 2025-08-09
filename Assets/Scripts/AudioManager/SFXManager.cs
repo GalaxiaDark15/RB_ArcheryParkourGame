@@ -58,6 +58,7 @@ public class SFXManager : MonoBehaviour
             if (audioSource.clip != footstepsSound || !audioSource.isPlaying)
             {
                 audioSource.pitch = 1.5f;
+                audioSource.volume = 0.5f;
                 audioSource.loop = true;
                 audioSource.clip = footstepsSound;
                 audioSource.Play();
@@ -77,6 +78,7 @@ public class SFXManager : MonoBehaviour
             if (audioSource.clip != footstepsSound || !audioSource.isPlaying)
             {
                 audioSource.pitch = 1.0f;
+                audioSource.volume = 0.5f;
                 audioSource.loop = true;
                 audioSource.clip = footstepsSound;
                 audioSource.Play();
@@ -98,5 +100,22 @@ public class SFXManager : MonoBehaviour
             audioSource.clip = null;
         }
     }
+
+    public void pauseAllSound()
+    {
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Pause();
+        }
+    }
+
+    public void resumeAllSound()
+    {
+        if (audioSource != null)
+        {
+            audioSource.UnPause();
+        }
+    }
+
 
 }

@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+
+    [SerializeField]
+    private SFXManager soundFXManager;
+
     private CharacterController controller;
 
     public float walkSpeed = 5f;
@@ -66,32 +70,14 @@ public class PlayerMovement : MonoBehaviour
                     verticalVelocity -= gravity * Time.deltaTime;
                 }
 
-                // moveDirection.x and moveDirection.z = horizontal input * speed
-                // vertical is verticalVelocity
+                WalkMove();
 
-                float x = Input.GetAxis("Horizontal");
-                float z = Input.GetAxis("Vertical");
-
-                Vector3 forward = transform.forward;
-                Vector3 right = transform.right;
-
-                Vector3 horizontalMove = forward * z + right * x;
-                horizontalMove *= currentSpeed;
-
-                moveDirection = horizontalMove;
-                moveDirection.y = verticalVelocity;
-
-                controller.Move(moveDirection * Time.deltaTime);
             }
             else
             {
                 if (wallRunning)
                 {
                     WallRunMove();
-                }
-                else
-                {
-                    WalkMove();
                 }
             }
 
@@ -117,48 +103,33 @@ public class PlayerMovement : MonoBehaviour
 
     void WalkMove()
     {
-        // Run logic: update speed based on Shift
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-            currentSpeed = runSpeed;
-        else
-            currentSpeed = walkSpeed;
-
-        // Get inputs
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        // Calculate horizontal movement relative to player orientation
         Vector3 forward = transform.forward;
         Vector3 right = transform.right;
 
         Vector3 horizontalMove = forward * z + right * x;
         horizontalMove *= currentSpeed;
 
-        // Keep the current vertical velocity so gravity and jumping accumulate
-        float verticalVelocity = moveDirection.y;
-
-        // Jumping
-        if (controller.isGrounded)
-        {
-            // If grounded, reset vertical velocity to a small negative to stick to ground
-            if (verticalVelocity < 0)
-                verticalVelocity = -2f;
-
-            if (Input.GetButtonDown("Jump"))
-                verticalVelocity = jumpPower;
-        }
-        else
-        {
-            // Apply gravity if midair
-            verticalVelocity -= gravity * Time.deltaTime;
-        }
-
-        // Update the moveDirection vector with horizontal and vertical velocities
         moveDirection = horizontalMove;
         moveDirection.y = verticalVelocity;
 
-        // Move the character controller
         controller.Move(moveDirection * Time.deltaTime);
+
+        if (isMoving == true && Input.GetKey(KeyCode.LeftShift))
+        {
+            soundFXManager.playFastFootstepsSound();
+        }
+        else if (isMoving == true)
+        {
+            soundFXManager.playFootstepsSound();
+        }
+        else if (isMoving == false)
+        {
+            soundFXManager.stopFootstepsSound();
+        }
+
     }
 
     void WallRunMove()

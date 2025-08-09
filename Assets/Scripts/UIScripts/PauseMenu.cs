@@ -5,6 +5,9 @@ using UnityEngine;
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField]
+    private SFXManager soundFXManager;
+
+    [SerializeField]
     private GameObject pauseMenu;
 
     [SerializeField]
@@ -47,6 +50,7 @@ public class PauseMenu : MonoBehaviour
         playerMovement.isPaused = true;
         mouseMovement.isPaused = true;
         weaponController.isPaused = true;
+        soundFXManager.pauseAllSound();
     }
 
     public void Resume()
@@ -62,6 +66,7 @@ public class PauseMenu : MonoBehaviour
         playerMovement.isPaused = false;
         mouseMovement.isPaused = false;
         weaponController.isPaused = false;
+        soundFXManager.resumeAllSound();
     }
 
 
