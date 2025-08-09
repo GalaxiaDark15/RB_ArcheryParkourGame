@@ -15,14 +15,7 @@ public class Bow : MonoBehaviour
 
     private Arrow currentArrow;
 
-    private string enemyTag;
-
     private bool isReloading;
-
-    public void SetEnemyTag(string enemyTag)
-    {
-        this.enemyTag = enemyTag;
-    }
 
     public float ReloadTime
     {
@@ -44,7 +37,6 @@ public class Bow : MonoBehaviour
 
         currentArrow = Instantiate(arrowPrefab, spawnPoint);
         currentArrow.transform.localPosition = Vector3.zero;
-        currentArrow.SetEnemyTag(enemyTag);
         isReloading = false;
     }
 

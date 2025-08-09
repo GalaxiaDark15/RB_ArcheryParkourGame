@@ -13,14 +13,7 @@ public class Arrow : MonoBehaviour
     [SerializeField]
     private Rigidbody rigidBody;
 
-    private string enemyTag = "Enemy";  // Default to "Enemy"
-
     private bool didHit;
-
-    public void SetEnemyTag(string enemyTag)
-    {
-        this.enemyTag = enemyTag;
-    }
 
     public void Fly(Vector3 force)
     {
@@ -33,22 +26,14 @@ public class Arrow : MonoBehaviour
 
     void OnTriggerEnter(Collider collider)
     {
+        // Debug.Log($"Arrow hit something: {collider.name}, tag: {collider.tag}");
         if (didHit) return;
         didHit = true;
-
-        if (collider.CompareTag(enemyTag))
-        {
-            EnemyHealth enemyHealth = collider.GetComponent<EnemyHealth>();
-            if (enemyHealth != null)
-            {
-                enemyHealth.TakeDamage();  // Call TakeDamage on the enemy
-            }
-            Debug.Log("Arrow landed on enemy");
-        }
 
         rigidBody.velocity = Vector3.zero;
         rigidBody.angularVelocity = Vector3.zero;
         rigidBody.isKinematic = true;
         transform.SetParent(collider.transform);
     }
+
 }

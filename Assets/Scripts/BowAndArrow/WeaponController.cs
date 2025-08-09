@@ -18,9 +18,6 @@ public class WeaponController : MonoBehaviour
     private float reloadTime = 1f;
 
     [SerializeField]
-    private string enemyTag;
-
-    [SerializeField]
     private float maxFirePower;
 
     [SerializeField]
@@ -55,7 +52,6 @@ public class WeaponController : MonoBehaviour
         originalMaxFirePower = maxFirePower;
         originalFirePowerSpeed = firePowerSpeed;
 
-        bow.SetEnemyTag(enemyTag);
         bow.ReloadTime = reloadTime;  // Set reload time on Bow
         bow.Reload();
 

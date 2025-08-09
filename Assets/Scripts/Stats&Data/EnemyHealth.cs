@@ -13,12 +13,25 @@ public class EnemyHealth : MonoBehaviour
 
     void Update()
     {
-        
+
     }
+
+    void OnTriggerEnter(Collider other)
+    {
+        // Check if the collider belongs to an arrow object
+        Arrow arrow = other.GetComponent<Arrow>();
+        if (arrow != null)
+        {
+            Debug.Log("Enemy detected hit by arrow");
+            TakeDamage();
+        }
+    }
+
 
     public void TakeDamage()
     {
         enemyHealth -= 50f;
+        Debug.Log(enemyHealth);
 
         if (enemyHealth <= 0f)
         {

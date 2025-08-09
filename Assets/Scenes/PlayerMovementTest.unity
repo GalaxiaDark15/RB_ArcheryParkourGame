@@ -241,7 +241,7 @@ GameObject:
   - component: {fileID: 99536202}
   - component: {fileID: 99536206}
   m_Layer: 0
-  m_Name: EnemyLayerCube
+  m_Name: EnemyTagCube
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1244,7 +1244,6 @@ MonoBehaviour:
   soundFXManager: {fileID: 663241576}
   bow: {fileID: 704463962}
   reloadTime: 0.4
-  enemyTag: Enemy
   maxFirePower: 100
   firePowerSpeed: 200
   rotateSpeed: 5
