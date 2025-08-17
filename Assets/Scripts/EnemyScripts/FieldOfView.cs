@@ -6,8 +6,10 @@ using UnityEngine;
 public class FieldOfView : MonoBehaviour
 {
     public float radius;
-    [Range(0,360)]
+    [Range(0, 360)]
     public float angle;
+
+    public float rotateToPlayerSpeed = 5f;
 
     public GameObject playerRef;
 
@@ -63,8 +65,27 @@ public class FieldOfView : MonoBehaviour
             Debug.Log("CanSeePlayer");
         }
         else
-        { 
+        {
             Debug.Log("CANNOTCANNOTCANNOTSeePlayer");
         }
     }
+
+    private void Update()
+    {
+        if (playerRef != null)
+        {
+            Vector3 lookPosition = playerRef.transform.position;
+            lookPosition.y = transform.position.y;
+
+            Vector3 direction = (lookPosition - transform.position).normalized;
+
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+
+            float rotationSpeed = rotateToPlayerSpeed;
+
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+    }
+
 }
