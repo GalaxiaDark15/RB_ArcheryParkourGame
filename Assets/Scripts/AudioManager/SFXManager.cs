@@ -31,14 +31,11 @@ public class SFXManager : MonoBehaviour
     {
         if (drawBowSound != null && audioSource != null)
         {
-            if (audioSource.clip != drawBowSound || !audioSource.isPlaying)
-            {
-                audioSource.loop = false;
-                audioSource.clip = drawBowSound;
-                audioSource.Play();
-            }
+            // Play draw bow sound without interrupting other sounds
+            audioSource.PlayOneShot(drawBowSound);
         }
     }
+
 
     public void stopDrawBowSound()
     {
