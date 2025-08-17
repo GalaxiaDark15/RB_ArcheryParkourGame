@@ -32,13 +32,16 @@ public class PlayerMovement : MonoBehaviour
     // Is the game paused?
     public bool isPaused = false;
 
-    // Your jump height threshold for bullet time activation
-    private float bulletTimeActivationHeight = 2.5f;
     private float initialSpawnPointY = 0f;
 
     private float mouseY;
 
     private bool fire;
+
+    private bool jumpTimerActive = false;
+    public float jumpTimer = 0f;
+    public float jumpTimerDuration = 0.4f;
+
 
     void Start()
     {
@@ -51,64 +54,74 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void Update()
+{
+    if (isPaused) return;
+
+    if (isWallJumping)
     {
-        if (isPaused) return;
+        wallJumpTimer -= Time.deltaTime;
+        if (wallJumpTimer <= 0f)
+            isWallJumping = false;
+    }
 
-        if (isWallJumping)
+    if (!wallRunning)
+    {
+        if (controller.isGrounded && !isWallJumping)
         {
-            wallJumpTimer -= Time.deltaTime;
-            if (wallJumpTimer <= 0f)
-                isWallJumping = false;
-        }
+            verticalVelocity = -2f; // small downward force to stick to ground
+            if (Input.GetButtonDown("Jump"))
+            {
+                verticalVelocity = jumpPower;
 
-        if (!wallRunning)
-        {
-            // Handle gravity
-            if (controller.isGrounded && !isWallJumping)
-            {
-                verticalVelocity = -2f; // small downward force to stick to ground
-                if (Input.GetButtonDown("Jump"))
-                {
-                    verticalVelocity = jumpPower;
-                }
-            }
-            else if (!isWallJumping)
-            {
-                verticalVelocity -= gravity * Time.deltaTime;
-            }
-
-            WalkMove();
-        }
-        else
-        {
-            if (wallRunning)
-            {
-                WallRunMove();
+                // Start jump timer here
+                jumpTimerActive = true;
+                jumpTimer = jumpTimerDuration;
             }
         }
-
-        // Track movement state
-        isMoving = (transform.position != lastPosition) && controller.isGrounded;
-        lastPosition = transform.position;
-
-        // Bullet time input and conditions:
-        if (Input.GetKeyDown(KeyCode.E))
+        else if (!isWallJumping)
         {
-            timeManager.DoNormalTime();
+            verticalVelocity -= gravity * Time.deltaTime;
         }
-        else if (controller.isGrounded)
+
+        WalkMove();
+    }
+    else
+    {
+        if (wallRunning)
         {
-            timeManager.DoNormalTime();
-        }
-        else if (!controller.isGrounded && Input.GetMouseButtonDown(0))
-        {
-            // Only activate bullet time if player is at least bulletTimeActivationHeight above spawn Y
-            if (transform.position.y > initialSpawnPointY + bulletTimeActivationHeight)
-            {
-                timeManager.DoBulletTime();
-            }
+            WallRunMove();
         }
     }
+
+    // Track movement state
+    isMoving = (transform.position != lastPosition) && controller.isGrounded;
+    lastPosition = transform.position;
+
+    // Update jump timer if active
+    if (jumpTimerActive)
+    {
+        jumpTimer -= Time.deltaTime;
+        if (jumpTimer <= 0f)
+        {
+            jumpTimerActive = false;
+        }
+    }
+
+    // Bullet time input and conditions:
+    if (Input.GetKeyDown(KeyCode.E))
+    {
+        timeManager.DoNormalTime();
+    }
+    else if (controller.isGrounded)
+    {
+        timeManager.DoNormalTime();
+    }
+    else if (!controller.isGrounded && jumpTimerActive == false && Input.GetMouseButtonDown(0))
+    {
+        // Only allow Bullet Time if the jump timer is finished and player is midair
+        timeManager.DoBulletTime();
+    }
+}
 
     void WalkMove()
     {
