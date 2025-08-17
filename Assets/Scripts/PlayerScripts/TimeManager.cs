@@ -15,6 +15,9 @@ public class TimeManager : MonoBehaviour
 
     private float savedTimeScale = 1f;
 
+    [SerializeField]
+    private GameObject bulletTimeBackground;
+
     // Is the game paused?
     public bool isPaused = false;
 
@@ -29,6 +32,7 @@ public class TimeManager : MonoBehaviour
         {
             bulletTimeElapsed = 0f; // reset timer here
             StartCoroutine(BulletTimeCoroutine());
+            bulletTimeBackground.SetActive(true);
         }
         else
         {
@@ -77,6 +81,8 @@ public class TimeManager : MonoBehaviour
         {
             weaponController.ResetFireValues();
         }
+
+        bulletTimeBackground.SetActive(false);
     }
 
     public void SaveTimeScaleBeforePause()
