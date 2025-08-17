@@ -72,7 +72,7 @@ public class FieldOfView : MonoBehaviour
 
     private void Update()
     {
-        if (playerRef != null)
+        if (playerRef != null && canSeePlayer)
         {
             Vector3 lookPosition = playerRef.transform.position;
             lookPosition.y = transform.position.y;
@@ -87,5 +87,6 @@ public class FieldOfView : MonoBehaviour
                 transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
     }
+
 
 }
