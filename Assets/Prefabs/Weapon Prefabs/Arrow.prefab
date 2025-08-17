@@ -297,3 +297,4 @@ MonoBehaviour:
   damage: 10
   torque: 5
   rigidBody: {fileID: 5817201018909162875}
+  arrowCollider: {fileID: 8157282374542443291}

@@ -6,26 +6,16 @@ public class EnemyHealth : MonoBehaviour
 {
     public float enemyHealth = 100f;
 
-    void Start()
-    {
-
-    }
-
-    void Update()
-    {
-
-    }
-
     void OnTriggerEnter(Collider other)
     {
-        // Check if the collider belongs to an arrow object
         Arrow arrow = other.GetComponent<Arrow>();
-        if (arrow != null)
+        if (arrow != null && arrow.IsFired) // Only take damage if arrow is fired
         {
-            Debug.Log("Enemy detected hit by arrow");
+            Debug.Log("Enemy detected hit by fired arrow");
             TakeDamage();
         }
     }
+
 
 
     public void TakeDamage()

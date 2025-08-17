@@ -4,40 +4,20 @@ using UnityEngine;
 
 public class Bow : MonoBehaviour
 {
-    [SerializeField]
-    private float reloadTime;
+    [SerializeField] private float reloadTime;
+    [SerializeField] private Arrow arrowPrefab;
+    [SerializeField] private Transform spawnPoint;
 
-    [SerializeField]
-    private Arrow arrowPrefab;
-
-    [SerializeField]
-    private Transform spawnPoint;
 
     private Arrow currentArrow;
-
     private bool isReloading;
 
-    public float ReloadTime
-    {
-        get { return reloadTime; }
-        set { reloadTime = value; }
-    }
-
-    public void Reload()
+    public void PrepareArrow()
     {
         if (isReloading || currentArrow != null) return;
-        isReloading = true;
-        StartCoroutine(ReloadAfterTime());
-    }
-
-    private IEnumerator ReloadAfterTime()
-    {
-        // Use WaitForSecondsRealtime to ignore timeScale slowing
-        yield return new WaitForSecondsRealtime(reloadTime);
-
         currentArrow = Instantiate(arrowPrefab, spawnPoint);
         currentArrow.transform.localPosition = Vector3.zero;
-        isReloading = false;
+        currentArrow.Prepare();  // Disable collider until fired
     }
 
 
@@ -47,11 +27,24 @@ public class Bow : MonoBehaviour
         var force = spawnPoint.TransformDirection(Vector3.forward * firePower);
         currentArrow.Fly(force);
         currentArrow = null;
-        Reload();
+        StartCoroutine(ReloadAfterTime());
+    }
+
+    private IEnumerator ReloadAfterTime()
+    {
+        isReloading = true;
+        yield return new WaitForSecondsRealtime(reloadTime);
+        isReloading = false;
     }
 
     public bool IsReady()
     {
         return (!isReloading && currentArrow != null);
     }
+
+    public bool IsReloading()
+    {
+        return isReloading;
+    }
+
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Arrow : MonoBehaviour
@@ -15,8 +13,12 @@ public class Arrow : MonoBehaviour
 
     private bool didHit;
 
+    public bool IsFired { get; private set; } = false;
+
     public void Fly(Vector3 force)
     {
+        IsFired = true; // Arrow is now fired
+
         gameObject.layer = LayerMask.NameToLayer("Arrows");
         rigidBody.isKinematic = false;
         rigidBody.AddForce(force, ForceMode.Impulse);
@@ -24,9 +26,20 @@ public class Arrow : MonoBehaviour
         transform.SetParent(null);
     }
 
-    void OnTriggerEnter(Collider collider)
+    public void Prepare()
     {
-        // Debug.Log($"Arrow hit something: {collider.name}, tag: {collider.tag}");
+        IsFired = false; // Arrow is only prepared, not fired yet
+
+        didHit = false;
+        rigidBody.isKinematic = true;
+        rigidBody.velocity = Vector3.zero;
+        rigidBody.angularVelocity = Vector3.zero;
+        transform.SetParent(null);
+    }
+
+
+    private void OnTriggerEnter(Collider collider)
+    {
         if (didHit) return;
         didHit = true;
 
@@ -35,5 +48,4 @@ public class Arrow : MonoBehaviour
         rigidBody.isKinematic = true;
         transform.SetParent(collider.transform);
     }
-
 }
