@@ -6,15 +6,18 @@ public class PlayerHealth : MonoBehaviour
 {
     public float playerHealth = 100f;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Update()
     {
-        
+        // if (Input.GetKeyDown(KeyCode.R))
+        // {
+        //     DecreaseHealth(10f);
+        // }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void DecreaseHealth(float amount)
     {
-        
+        playerHealth -= amount;
+        playerHealth = Mathf.Max(playerHealth, 0f); // Prevent health going below 0
+        Debug.Log("Player health decreased. Current health: " + playerHealth);
     }
 }
