@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-
     [SerializeField]
     private SFXManager soundFXManager;
 
@@ -25,76 +24,86 @@ public class PlayerMovement : MonoBehaviour
     private float wallJumpDuration = 0.2f;
     private float wallJumpTimer = 0f;
 
-
     private float currentSpeed;
 
     [Header("References")]
     public TimeManager timeManager;
 
-
     // Is the game paused?
     public bool isPaused = false;
 
+    // Your jump height threshold for bullet time activation
+    private float bulletTimeActivationHeight = 2.5f;
+    private float initialSpawnPointY = 0f;
+
+    private float mouseY;
+
+    private bool fire;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         lastPosition = transform.position;
         currentSpeed = walkSpeed; // default speed
+
+        // Save initial spawn point Y coordinate
+        initialSpawnPointY = transform.position.y;
     }
 
     void Update()
     {
-        if (isPaused != true)
+        if (isPaused) return;
+
+        if (isWallJumping)
         {
-            if (isWallJumping)
-            {
-                wallJumpTimer -= Time.deltaTime;
-                if (wallJumpTimer <= 0f)
-                    isWallJumping = false;
-            }
+            wallJumpTimer -= Time.deltaTime;
+            if (wallJumpTimer <= 0f)
+                isWallJumping = false;
+        }
 
-            if (!wallRunning)
+        if (!wallRunning)
+        {
+            // Handle gravity
+            if (controller.isGrounded && !isWallJumping)
             {
-                // Handle gravity
-                if (controller.isGrounded && !isWallJumping)
+                verticalVelocity = -2f; // small downward force to stick to ground
+                if (Input.GetButtonDown("Jump"))
                 {
-                    verticalVelocity = -2f; // small downward force to stick to ground
-                    if (Input.GetButtonDown("Jump"))
-                    {
-                        verticalVelocity = jumpPower;
-                    }
-                }
-                else if (!isWallJumping)
-                {
-                    verticalVelocity -= gravity * Time.deltaTime;
-                }
-
-                WalkMove();
-
-            }
-            else
-            {
-                if (wallRunning)
-                {
-                    WallRunMove();
+                    verticalVelocity = jumpPower;
                 }
             }
-
-            // Track movement state
-            isMoving = (transform.position != lastPosition) && controller.isGrounded;
-            lastPosition = transform.position;
-
-            // Bullet time input and conditions:
-            if (Input.GetKeyDown(KeyCode.E))
+            else if (!isWallJumping)
             {
-                timeManager.DoNormalTime();
+                verticalVelocity -= gravity * Time.deltaTime;
             }
-            else if (controller.isGrounded)
+
+            WalkMove();
+        }
+        else
+        {
+            if (wallRunning)
             {
-                timeManager.DoNormalTime();
+                WallRunMove();
             }
-            else if (!controller.isGrounded && Input.GetMouseButtonDown(0))
+        }
+
+        // Track movement state
+        isMoving = (transform.position != lastPosition) && controller.isGrounded;
+        lastPosition = transform.position;
+
+        // Bullet time input and conditions:
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            timeManager.DoNormalTime();
+        }
+        else if (controller.isGrounded)
+        {
+            timeManager.DoNormalTime();
+        }
+        else if (!controller.isGrounded && Input.GetMouseButtonDown(0))
+        {
+            // Only activate bullet time if player is at least bulletTimeActivationHeight above spawn Y
+            if (transform.position.y > initialSpawnPointY + bulletTimeActivationHeight)
             {
                 timeManager.DoBulletTime();
             }
@@ -129,7 +138,6 @@ public class PlayerMovement : MonoBehaviour
         {
             soundFXManager.stopFootstepsSound();
         }
-
     }
 
     void WallRunMove()
