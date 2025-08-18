@@ -15,8 +15,8 @@ TagManager:
   - Wall
   - Arrows
   - PlayerLayer
-  - 
-  - 
+  - EnemyArrow
+  - EnemyLayer
   - 
   - 
   - 

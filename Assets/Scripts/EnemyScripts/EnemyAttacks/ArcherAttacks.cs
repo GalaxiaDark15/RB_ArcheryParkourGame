@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class ArcherAttack : MonoBehaviour
 {
@@ -9,17 +10,27 @@ public class ArcherAttack : MonoBehaviour
     private Transform playerRef;
     private FieldOfView fieldOfView;
     private Bow bow;
+    private EnemyHealth enemyHealth;
 
     private void Start()
     {
-        playerRef = GameObject.FindGameObjectWithTag("Player").transform;
+        playerRef = GameObject.FindGameObjectWithTag("Player")?.transform;
         fieldOfView = GetComponent<FieldOfView>();
         bow = GetComponentInChildren<Bow>();
+        enemyHealth = GetComponent<EnemyHealth>();
+
+        // Prepare arrow initially for a quick first shot
+        if (bow != null && !bow.IsReady())
+            bow.PrepareArrow();
     }
 
     private void Update()
     {
-        if (playerRef == null || fieldOfView == null || bow == null)
+        if (playerRef == null || fieldOfView == null || bow == null || enemyHealth == null)
+            return;
+
+        // Only shoot if alive
+        if (enemyHealth.enemyHealth <= 0f)
             return;
 
         cooldownTimer -= Time.deltaTime;
@@ -32,8 +43,10 @@ public class ArcherAttack : MonoBehaviour
 
             if (cooldownTimer <= 0f)
             {
-                bow.Fire(50f);  // Example firePower, adjust if needed
+                bow.Fire(50f); // Adjust power as needed
                 cooldownTimer = attackCooldown;
+                // Reload next arrow after cooldown asynchronously
+                StartCoroutine(PrepareNextArrowAfterReload());
             }
         }
     }
@@ -44,5 +57,16 @@ public class ArcherAttack : MonoBehaviour
         Vector3 direction = (lookPos - transform.position).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(direction);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
+    }
+
+    private IEnumerator PrepareNextArrowAfterReload()
+    {
+        float reloadTime = bow.ReloadTime;
+        yield return new WaitForSeconds(reloadTime);
+
+        if (bow != null && !bow.IsReady())
+        {
+            bow.PrepareArrow();
+        }
     }
 }

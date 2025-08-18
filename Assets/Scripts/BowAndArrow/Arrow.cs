@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class Arrow : MonoBehaviour
 {
-    [SerializeField]
-    private float damage;
+    public float damage;
 
     [SerializeField]
     private float torque;
@@ -15,9 +14,13 @@ public class Arrow : MonoBehaviour
 
     public bool IsFired { get; private set; } = false;
 
-    public void Fly(Vector3 force)
+    // NEW: Track if the arrow was fired by Enemy
+    public bool isEnemyArrow = false;
+
+    public void Fly(Vector3 force, bool firedByEnemy = false)
     {
         IsFired = true; // Arrow is now fired
+        isEnemyArrow = firedByEnemy;
 
         gameObject.layer = LayerMask.NameToLayer("Arrows");
         rigidBody.isKinematic = false;
@@ -29,14 +32,13 @@ public class Arrow : MonoBehaviour
     public void Prepare()
     {
         IsFired = false; // Arrow is only prepared, not fired yet
-
         didHit = false;
+        isEnemyArrow = false; // Default: not from enemy
         rigidBody.isKinematic = true;
         rigidBody.velocity = Vector3.zero;
         rigidBody.angularVelocity = Vector3.zero;
         transform.SetParent(null);
     }
-
 
     private void OnTriggerEnter(Collider collider)
     {

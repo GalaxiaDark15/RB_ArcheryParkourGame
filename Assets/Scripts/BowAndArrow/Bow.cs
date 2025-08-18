@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class Bow : MonoBehaviour
 {
-    [SerializeField] private float reloadTime;
+    [SerializeField] public float reloadTime;
     [SerializeField] private Arrow arrowPrefab;
     [SerializeField] private Transform spawnPoint;
 
-
     private Arrow currentArrow;
     private bool isReloading;
+
+    // NEW: Track ownership: is this Bow on an enemy?
+    public bool isEnemyBow = false;
 
     public void PrepareArrow()
     {
@@ -20,12 +22,12 @@ public class Bow : MonoBehaviour
         currentArrow.Prepare();  // Disable collider until fired
     }
 
-
     public void Fire(float firePower)
     {
         if (isReloading || currentArrow == null) return;
+
         var force = spawnPoint.TransformDirection(Vector3.forward * firePower);
-        currentArrow.Fly(force);
+        currentArrow.Fly(force, isEnemyBow); // Set arrow ownership
         currentArrow = null;
         StartCoroutine(ReloadAfterTime());
     }
@@ -47,4 +49,10 @@ public class Bow : MonoBehaviour
         return isReloading;
     }
 
+    public float ReloadTime
+    {
+        get { return reloadTime; }
+        // optionally add a setter if you want to change it from outside
+        // set { reloadTime = value; }
+    }
 }

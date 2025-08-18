@@ -9,14 +9,13 @@ public class EnemyHealth : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         Arrow arrow = other.GetComponent<Arrow>();
-        if (arrow != null && arrow.IsFired) // Only take damage if arrow is fired
+        // Only take damage if arrow is fired, and NOT by enemy
+        if (arrow != null && arrow.IsFired && !arrow.isEnemyArrow)
         {
-            Debug.Log("Enemy detected hit by fired arrow");
+            Debug.Log("Enemy detected hit by fired player arrow");
             TakeDamage();
         }
     }
-
-
 
     public void TakeDamage()
     {
