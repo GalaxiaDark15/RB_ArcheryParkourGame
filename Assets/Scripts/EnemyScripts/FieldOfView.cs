@@ -58,16 +58,6 @@ public class FieldOfView : MonoBehaviour
         }
         else if (canSeePlayer)
             canSeePlayer = false;
-
-
-        if (canSeePlayer == true)
-        {
-            Debug.Log("CanSeePlayer");
-        }
-        else
-        {
-            Debug.Log("CANNOTCANNOTCANNOTSeePlayer");
-        }
     }
 
     private void Update()
