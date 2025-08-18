@@ -5,6 +5,9 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField]
+    private GameObject bulletTimeAlert;
+
+    [SerializeField]
     private SFXManager soundFXManager;
 
     private CharacterController controller;
@@ -42,7 +45,6 @@ public class PlayerMovement : MonoBehaviour
     public float jumpTimer = 0f;
     public float jumpTimerDuration = 0.4f;
 
-
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -51,77 +53,104 @@ public class PlayerMovement : MonoBehaviour
 
         // Save initial spawn point Y coordinate
         initialSpawnPointY = transform.position.y;
+
+        // Ensure alert is hidden at the start
+        if (bulletTimeAlert != null)
+            bulletTimeAlert.SetActive(false);
     }
 
     void Update()
-{
-    if (isPaused) return;
-
-    if (isWallJumping)
     {
-        wallJumpTimer -= Time.deltaTime;
-        if (wallJumpTimer <= 0f)
-            isWallJumping = false;
-    }
+        if (isPaused) return;
 
-    if (!wallRunning)
-    {
-        if (controller.isGrounded && !isWallJumping)
+        if (isWallJumping)
         {
-            verticalVelocity = -2f; // small downward force to stick to ground
-            if (Input.GetButtonDown("Jump"))
-            {
-                verticalVelocity = jumpPower;
+            wallJumpTimer -= Time.deltaTime;
+            if (wallJumpTimer <= 0f)
+                isWallJumping = false;
+        }
 
-                // Start jump timer here
-                jumpTimerActive = true;
-                jumpTimer = jumpTimerDuration;
+        if (!wallRunning)
+        {
+            if (controller.isGrounded && !isWallJumping)
+            {
+                verticalVelocity = -2f; // small downward force to stick to ground
+                if (Input.GetButtonDown("Jump"))
+                {
+                    verticalVelocity = jumpPower;
+
+                    // Start jump timer here
+                    jumpTimerActive = true;
+                    jumpTimer = jumpTimerDuration;
+
+                    // Hide alert on new jump
+                    if (bulletTimeAlert != null)
+                        bulletTimeAlert.SetActive(false);
+                }
+            }
+            else if (!isWallJumping)
+            {
+                verticalVelocity -= gravity * Time.deltaTime;
+            }
+
+            WalkMove();
+        }
+        else
+        {
+            if (wallRunning)
+            {
+                WallRunMove();
             }
         }
-        else if (!isWallJumping)
+
+        // Track movement state
+        isMoving = (transform.position != lastPosition) && controller.isGrounded;
+        lastPosition = transform.position;
+
+        // Update jump timer logic
+        if (jumpTimerActive)
         {
-            verticalVelocity -= gravity * Time.deltaTime;
+            jumpTimer -= Time.deltaTime;
+            if (jumpTimer <= 0f)
+            {
+                jumpTimerActive = false;
+                // Only show alert if player is midair
+                if (!controller.isGrounded && bulletTimeAlert != null)
+                    bulletTimeAlert.SetActive(true);
+            }
+            else
+            {
+                // Always hide alert during the countdown
+                if (bulletTimeAlert != null)
+                    bulletTimeAlert.SetActive(false);
+            }
         }
 
-        WalkMove();
-    }
-    else
-    {
-        if (wallRunning)
+        // If player lands, hide alert (prevent leftover alert on landing)
+        if (controller.isGrounded && bulletTimeAlert != null)
         {
-            WallRunMove();
+            bulletTimeAlert.SetActive(false);
+        }
+
+        // Bullet time input and conditions:
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            timeManager.DoNormalTime();
+        }
+        else if (controller.isGrounded)
+        {
+            timeManager.DoNormalTime();
+        }
+        else if (!controller.isGrounded && !jumpTimerActive && Input.GetMouseButtonDown(0))
+        {
+            // Only allow Bullet Time if the jump timer is finished and player is midair
+            timeManager.DoBulletTime();
+
+            // Hide the alert when bullet time is used
+            if (bulletTimeAlert != null)
+                bulletTimeAlert.SetActive(false);
         }
     }
-
-    // Track movement state
-    isMoving = (transform.position != lastPosition) && controller.isGrounded;
-    lastPosition = transform.position;
-
-    // Update jump timer if active
-    if (jumpTimerActive)
-    {
-        jumpTimer -= Time.deltaTime;
-        if (jumpTimer <= 0f)
-        {
-            jumpTimerActive = false;
-        }
-    }
-
-    // Bullet time input and conditions:
-    if (Input.GetKeyDown(KeyCode.E))
-    {
-        timeManager.DoNormalTime();
-    }
-    else if (controller.isGrounded)
-    {
-        timeManager.DoNormalTime();
-    }
-    else if (!controller.isGrounded && jumpTimerActive == false && Input.GetMouseButtonDown(0))
-    {
-        // Only allow Bullet Time if the jump timer is finished and player is midair
-        timeManager.DoBulletTime();
-    }
-}
 
     void WalkMove()
     {
