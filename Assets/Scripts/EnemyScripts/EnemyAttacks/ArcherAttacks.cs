@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class ArcherAttack : MonoBehaviour
+public class ArcherAttacks : MonoBehaviour
 {
     public float attackRange = 20f;
     public float attackCooldown = 2f;
@@ -43,7 +43,7 @@ public class ArcherAttack : MonoBehaviour
 
             if (cooldownTimer <= 0f)
             {
-                bow.Fire(50f); // Adjust power as needed
+                bow.Fire(100f); // Adjust power as needed
                 cooldownTimer = attackCooldown;
                 // Reload next arrow after cooldown asynchronously
                 StartCoroutine(PrepareNextArrowAfterReload());
